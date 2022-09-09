@@ -5,12 +5,11 @@ import random as rnd
 import main as ns
 
 app = Client(
-    
+
     'windows italia tool bot',
     api_id = 404,
     api_hash = '',
     bot_token = ''
-    
 )
 
 file = None
@@ -26,13 +25,12 @@ def start(bot, message):
 
 @app.on_message(filters.regex(r'^[\.\!\&\/]ventoy$', re.IGNORECASE) & filters.text)
 async def ventoy(bot, message):
-    
     print('---request file---')
     
     global file
     chat_id = message.chat.id
         
-    if file is not None:
+    if not file:
         await bot.send_document(chat_id, file.document.file_id)
     else:
         with open(ns.getFile(), 'rb') as document:
@@ -42,7 +40,6 @@ async def ventoy(bot, message):
 
 @app.on_message(filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE) & filters.text)
 async def ping(bot, message):
-    
     if int(message.from_user.id) in admin:
         print('---ping---')
         await message.reply('Pong 🏓')
@@ -50,7 +47,6 @@ async def ping(bot, message):
     
 @app.on_message(filters.regex(r'^[\.\!\&\/]alba$', re.IGNORECASE) & filters.group)
 async def kick(bot,message):
-    
     print('---kick---')
     chat_id = message.chat.id
     await bot.ban_chat_member(chat_id, message.from_user.id)
@@ -63,7 +59,6 @@ async def kick(bot,message):
 
 @app.on_message(filters.regex(r'^[\.\!\&\/]pwgen', re.IGNORECASE) & filters.text)
 async def pwgen(bot, message):
-    
     print('---pwgen---')
     pw= []
     char = list(st.ascii_letters+st.digits+'!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
@@ -89,7 +84,6 @@ async def pwgen(bot, message):
     await bot.send_message(message.from_user.id, f'PASSWORD:\n```{pw}```')
     await message.reply('[password mandata in privato](t.me/windowsitaliatool_bot)')
     print('---end pwgen---')
-    
 @app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)
 async def calc(bot, message):
     gb = message.text.split(' ')[1]
@@ -102,7 +96,5 @@ async def search(bot, message):
     GOOGLE_URL='https://www.google.com/search?q='
     DUCK_URL='https://duckduckgo.com/?q='
     txt = message.split(' ')
-        
-    
 
 app.run() 
