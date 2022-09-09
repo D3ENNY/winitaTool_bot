@@ -9,8 +9,8 @@ REGEX = '^[\.\!\&\/]'
 upd = Updater(TOKEN)
 file=None
 
+
 def ventoy(bot, update):
-    
     cmd = bot.message.text.lower()
     chat_id = bot.message.chat_id
     user = bot.message.from_user
@@ -22,7 +22,7 @@ def ventoy(bot, update):
         print('---request file---')
         global file
         
-        if file is not None:
+        if not file:
             update.bot.send_document(chat_id, file.document.file_id, caption='beccate sto file')
         else:
             with open(ns.getFile(), 'rb') as document:
@@ -70,10 +70,5 @@ def ventoy(bot, update):
         bot.message.reply_text('gb {}\ngib {}\ngib convertiti {}'.format(gb, gib, int(gib)))
         
         
-            
-            
-        
-        
-    
 upd.dispatcher.add_handler(MessageHandler(Filters.text & Filters.regex((r'^[\.\!\&\/]')), ventoy))
 upd.start_polling() 
