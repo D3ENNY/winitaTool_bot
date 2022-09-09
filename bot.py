@@ -1,4 +1,6 @@
 from pyrogram import Client, filters, enums
+from pyrogram.types import InlineKeyboardButton as keybutton
+from pyrogram.types import InlineKeyboardMarkup as keymarkup
 import re, math
 import string as st
 import random as rnd
@@ -99,9 +101,23 @@ async def calc(bot, message):
 
 @app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)
 async def search(bot, message):
+    print('---search---')
     GOOGLE_URL='https://www.google.com/search?q='
     DUCK_URL='https://duckduckgo.com/?q='
-    txt = message.split(' ')
+    txt = re.sub(r'^[\.\!\&\/]search','', message.text.lower()).strip()
+    url_txt = txt.replace(' ', '+')
+    BTN = [
+        [
+            keybutton('DUCKDUCKGO', url=DUCK_URL+url_txt),
+            keybutton('GOOGLE', url=GOOGLE_URL+url_txt)
+        ]
+    ]
+    await message.reply(
+        text=f'ricerca per {txt} 👇',
+        reply_markup=keymarkup(BTN),
+        disable_web_page_preview = True
+    )
+    print('--end search---')
         
     
 
