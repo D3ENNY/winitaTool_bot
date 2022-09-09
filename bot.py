@@ -19,7 +19,7 @@ file = None
 admin = []
 
 @app.on_message(filters.command('start'))
-def start(bot, message): 
+def start(bot, message):
     print('---start---')
     for m in app.get_chat_members(message.chat.id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
         admin.append(int(m.user.id))
@@ -30,16 +30,16 @@ def start(bot, message):
 @app.on_message(filters.regex(r'^[\.\!\&\/]ventoy$', re.IGNORECASE) & filters.text)
 async def ventoy(bot, message):
     print('---request file---')
-    
+
     global file
     chat_id = message.chat.id
-        
+
     if not file:
         await bot.send_document(chat_id, file.document.file_id)
     else:
         with open(ns.getFile(), 'rb') as document:
             file = await bot.send_document(chat_id, document)
-            
+
     print('---end request file---')
 
 
@@ -49,6 +49,13 @@ async def ping(bot, message):
         print('---ping---')
         await message.reply('Pong 🏓')
         print('---end ping---')
+
+@app.on_message(filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE) & filters.text)
+async def ping(bot, message):
+    if int(message.from_user.id) in admin:
+        print('---pong---')
+        await message.reply('Ping 🏓')
+        print('---end pong---')
 
 
 @app.on_message(filters.regex(r'^[\.\!\&\/]alba$', re.IGNORECASE) & filters.group)
@@ -82,23 +89,23 @@ async def pwgen(bot, message):
         await message.reply('⚠️ il comando deve avere un argomento numerico')
         print('---pwgen error 1---')
         return 1
-    
+
     for i in range(int(lenght)):
         pw.append(rnd.choice(char))
-        
+
     rnd.shuffle(pw)
     pw = ''.join(pw)
     await bot.send_message(message.from_user.id, f'PASSWORD:\n```{pw}```')
     await message.reply('[password mandata in privato](t.me/windowsitaliatool_bot)')
     print('---end pwgen---')
-    
+
 
 @app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)
 async def calc(bot, message):
     gb = message.text.split(' ')[1]
-    gib = ( int(gb) / 1024 ) * 1000
+    gib = math.floor(((int(gb) / 2**30) * 10**9) * 10**3 + 0.5) / 10**3
     print(gib,'\t',int(gib))
-    await message.reply('gb {}\ngib {}\ngib convertiti {}'.format(gb, gib, math.floor(gib+0.5)))
+    await message.reply(f'{gb} GB sono pari a {gib} GiB')
 
 
 @app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)
@@ -120,6 +127,6 @@ async def search(bot, message):
         disable_web_page_preview = True
     )
     print('--end search---')
-        
 
-app.run() 
+
+app.run()

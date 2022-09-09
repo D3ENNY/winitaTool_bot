@@ -25,10 +25,17 @@ def getVersion():
     return x.group(1)
 
 
+
 version = getVersion()
-with open('ventoy-version.txt', 'w+') as file:
-    if not file:
-        file.write(version)
-    elif file.read() != version:
+
+# Watch out: garbage code ahead!
+try:
+    with open('ventoy-version.txt', 'r+') as file:
+        if file.read() != version:
+            file.write(version)
+            downloadFile(f'https://github.com/ventoy/Ventoy/releases/download/v{version}/ventoy-{version}-windows.zip')
+            
+except FileNotFoundError:
+    with open('ventoy-version.txt', 'w') as file:
         file.write(version)
         downloadFile(f'https://github.com/ventoy/Ventoy/releases/download/v{version}/ventoy-{version}-windows.zip')
