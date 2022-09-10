@@ -93,7 +93,7 @@ async def pwgen(bot, message):
     print('---end pwgen---')
     
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text) #TODO insierie messaggi di errore in caso di mancato inout
+@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text) #TODO insierie messaggi di errore in caso di mancato input implementazione gib -> gb 
 async def calc(bot, message):
     gb = message.text.split(' ')[1]
     gib = ( int(gb) / 2**30 ) * 10**9
@@ -101,10 +101,10 @@ async def calc(bot, message):
     await message.reply('gb {}\ngib {}\ngib convertiti {}'.format(gb, gib, math.floor((gib * 10**X)+0.5)/10**X))
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)  #TODO messaggi di errore invalid url
+@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)  #TODO messaggi di errore invalid url + modifica messaggio
 async def search(bot, message):
     print('---search---')
-    GOOGLE_URL='https://www.google.com/search?q='
+    GOOGLE_URL='https://www.google.com/search?q='       
     DUCK_URL='https://duckduckgo.com/?q='
     txt = re.sub(r'^[\.\!\&\/]search','', message.text.lower()).strip()
     url_txt = txt.replace(' ', '+')
@@ -120,6 +120,8 @@ async def search(bot, message):
         disable_web_page_preview = True
     )
     print('--end search---')
+    
+#TODO implementazione rufus
         
 
 app.run() 
