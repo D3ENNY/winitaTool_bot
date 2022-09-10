@@ -34,7 +34,7 @@ async def ventoy(bot, message):
     global file
     chat_id = message.chat.id
 
-    if not file:
+    if file:
         await bot.send_document(chat_id, file.document.file_id)
     else:
         with open(ns.getFile(), 'rb') as document:

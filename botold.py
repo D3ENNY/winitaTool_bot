@@ -22,7 +22,7 @@ def ventoy(bot, update):
         print('---request file---')
         global file
         
-        if not file:
+        if file:
             update.bot.send_document(chat_id, file.document.file_id, caption='beccate sto file')
         else:
             with open(ns.getFile(), 'rb') as document:
