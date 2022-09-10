@@ -1,6 +1,6 @@
 #!/bin/python
 
-from pyrogram import Client, filters, enums
+from pyrogram import Client, filters, enums, emoji
 from pyrogram.types import InlineKeyboardButton as keybutton
 from pyrogram.types import InlineKeyboardMarkup as keymarkup
 import re, math
@@ -14,6 +14,7 @@ app = Client(
     api_hash = '586ab19953703193dd8d7ad44ea4f3cb',
     bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
 )
+
 
 file = None
 admin = []
@@ -82,11 +83,11 @@ async def pwgen(bot, message):
     try:
         lenght = message.text.split(' ')[1]
         if not lenght.isdigit():
-            await message.reply('⚠️ l\' argomento del comando deve essere un numero')
+            await bot.send_message('⚠️ l\' argomento del comando deve essere un numero')
             print('---pwgen error 0---')
             return 0
     except:
-        await message.reply('⚠️ il comando deve avere un argomento numerico')
+        await bot.send_message('⚠️ il comando deve avere un argomento numerico')
         print('---pwgen error 1---')
         return 1
 
@@ -100,15 +101,42 @@ async def pwgen(bot, message):
     print('---end pwgen---')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)
+@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)        #TODO insierie messaggi di errore in caso di mancato input implementazione gib -> gb
 async def calc(bot, message):
-    gb = message.text.split(' ')[1]
-    gib = math.floor(((int(gb) / 2**30) * 10**9) * 10**3 + 0.5) / 10**3
-    print(gib,'\t',int(gib))
-    await message.reply(f'{gb} GB sono pari a {gib} GiB')
+    txt = message.text.split(' ')
+    chat_id = message.chat.id
+    unit=None
+    n=None
+    result=None
+
+    match len(txt):
+        case 1:
+            bot.send_message(chat_id, '⚠️ il comando deve avere almeno un argomento numerico ed un unità di misura (```gib``` / ```gb```)')
+            return 1
+        case 2:
+            bot.send_message(chat_id, '⚠️ il comando deve avere come secondo argomento un unità di misura (```gib``` / ```gb```)')
+            return 2
+        case _:
+            if txt[1].isdigit():
+                n = txt[1]
+            else:
+                bot.send_message(chat_id, '⚠️ il primo argomento del comando deve essere un numero')
+                return 3
+            if txt[3] == 'gb' or txt[3] == 'gib':
+                unit = txt[3]
+            else:
+                bot.send_message(chat_id, '⚠️ il secondo argomento deve essere un unità di misura ```gb``` o ```gib```')
+                return 4
+    
+    if unit == 'gb':
+        result = math.floor(((int(gb) / 2**30) * 10**9) * 10**3 + 0.5) / 10**3
+    elif unit == 'gib':
+        result = 'pls alba fammi il calcolo che non so quale sia'
+    print(result)
+    await message.reply(f'{n} {unit} sono {resul} *capire come inserire l\'altra variabile*')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)
+@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)      #TODO messaggi di errore invalid url + modifica messaggio
 async def search(bot, message):
     print('---search---')
     GOOGLE_URL='https://www.google.com/search?q='
@@ -127,6 +155,16 @@ async def search(bot, message):
         disable_web_page_preview = True
     )
     print('--end search---')
+    print(message.chat)
+TARGET = -1001641675174
+MESSAGE = '{} benvenuto capo!'
+@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
+async def benvenuto(bot, message):
+     new_members = [u.mention for u in message.new_chat_members]
+     text = MESSAGE.format(emoji.SPARKLES, ", ".join(new_members))
+     await message.reply_text(text, disable_web_page_preview=True)
+
+#TODO implementazione rufus
 
 
 app.run()
