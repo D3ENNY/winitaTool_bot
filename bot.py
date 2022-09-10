@@ -164,7 +164,7 @@ async def benvenuto(bot, message):
      text = MESSAGE.format(emoji.SPARKLES, ", ".join(new_members))
      await message.reply_text(text, disable_web_page_preview=True)
 
-#TODO implementazione rufus
+#TODO implementazione rufus.
 
 
 app.run()
