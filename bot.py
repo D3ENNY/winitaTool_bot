@@ -93,15 +93,15 @@ async def pwgen(bot, message):
     print('---end pwgen---')
     
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)
+@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text) #TODO insierie messaggi di errore in caso di mancato inout
 async def calc(bot, message):
     gb = message.text.split(' ')[1]
-    gib = ( int(gb) / 1024 ) * 1000
+    gib = ( int(gb) / 2**30 ) * 10**9
     print(gib,'\t',int(gib))
-    await message.reply('gb {}\ngib {}\ngib convertiti {}'.format(gb, gib, math.floor(gib+0.5)))
+    await message.reply('gb {}\ngib {}\ngib convertiti {}'.format(gb, gib, math.floor((gib * 10**X)+0.5)/10**X))
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)
+@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)  #TODO messaggi di errore invalid url
 async def search(bot, message):
     print('---search---')
     GOOGLE_URL='https://www.google.com/search?q='
