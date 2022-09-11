@@ -184,6 +184,12 @@ async def benvenuto(bot, message):
      await message.reply_text(text, disable_web_page_preview=True)
 
 #TODO implementazione rufus.
+@app.on_message(filters.regex(r'^[\.\!\&\/]rufus$', re.IGNORECASE) & filters.text)
+async def rufus(bot, message):
+    print('---rufus---')
+    with open('volevi.gif', 'rb') as troll:
+        await bot.send_animation(message.chat.id, troll)
+    print('---end rufus---')
 
 
 app.run()
