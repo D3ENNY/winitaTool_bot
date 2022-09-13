@@ -3,6 +3,7 @@
 from pyrogram import Client, filters, enums, emoji
 from pyrogram.types import InlineKeyboardButton as keybutton
 from pyrogram.types import InlineKeyboardMarkup as keymarkup
+from pyrogram.types import Message, Chat
 import re, math
 import string as st
 import random as rnd
@@ -15,20 +16,58 @@ app = Client(
     bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
 )
 
-
+#global variable
+status = False
 file = None
-admin = []
+admin = [398290777, 77889335, 828056346]  #denny, alba, kaki
 
-@app.on_message(filters.command('start'))
-def start(bot, message):
-    print('---start---')
+#custom filter
+def status_filter():
+    async def func(_,__,___):
+        global status
+        return True if not status else False
+    return filters.create(func)
+
+def admin_filter():
+    async def func(_,__,msg:Message):
+        return True if msg.from_user.id in admin else False
+    return filters.create(func)
+
+#async def admin_filter(_, c: Client, m: Message):
+#    user = await c.get_chat_member(\
+#        chat_id=m.chat.id,
+#        user_id=m.from_user.id,
+#    )
+#    return bool(
+#        user.status == enums.ChatMemberStatus.OWNER
+#        or user.status == enums.ChatMemberStatus.ADMINISTRATOR
+#    )
+#check_admin = filters.create(admin_filter)
+
+#function      
+def getAdmin(message):
     for m in app.get_chat_members(message.chat.id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
         admin.append(int(m.user.id))
+
+#bot function
+@app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & status_filter())
+def start(bot, message):
+    print('---start---')
+    global status 
+    getAdmin(message)
+    status = True
     print(admin)
     print('---end start---')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]ventoy$', re.IGNORECASE) & filters.text)
+@app.on_message(filters.command('reload', prefixes=['!', '.', '&', '/']) & filters.text & admin_filter())     #TODO reload function
+def reload(bot, message):
+    print('---reload---')
+    getAdmin(message)
+    print(admin)
+    print('---end reload---')
+
+@app.on_message(filters.command('ventoy', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO fix file_id problem + send documents message...
 async def ventoy(bot, message):
     print('---request file---')
 
@@ -39,27 +78,25 @@ async def ventoy(bot, message):
         await bot.send_document(chat_id, file.document.file_id)
     else:
         with open(ns.getFile(), 'rb') as document:
-            file = await bot.send_document(chat_id, document)
+            file = await bot.send_document(chat_id, document, file_name=ns.getFile().replace('download/', '').strip())
 
     print('---end request file---')
 
 
-@app.on_message(filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE) & filters.text)
+@app.on_message(filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE) & filters.text & admin_filter())
 async def ping(bot, message):
-    if int(message.from_user.id) in admin:
-        print('---ping---')
-        await message.reply('Pong 🏓')
-        print('---end ping---')
+    print('---ping---')
+    await message.reply('Pong 🏓')
+    print('---end ping---')
 
-@app.on_message(filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE) & filters.text)
+@app.on_message(filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE) & filters.text & admin_filter())
 async def ping(bot, message):
-    if int(message.from_user.id) in admin:
-        print('---pong---')
-        await message.reply('Ping 🏓')
-        print('---end pong---')
+    print('---pong---')
+    await message.reply('Ping 🏓')
+    print('---end pong---')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]alba$', re.IGNORECASE) & filters.group)
+@app.on_message(filters.command('alba', prefixes=['!', '.', '&', '/']) & filters.group)
 async def kick(bot,message):
     print('---kick---')
     chat_id = message.chat.id
@@ -72,7 +109,7 @@ async def kick(bot,message):
     print('---end kick---')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]pwgen', re.IGNORECASE) & filters.text)   #TODO se in privata non mandare il collegamento ipertestuale
+@app.on_message(filters.command('pwgen', prefixes=['!', '.', '&', '/']) & filters.text)
 async def pwgen(bot, message):
     print('---pwgen---')
     pw= []
@@ -184,12 +221,18 @@ async def benvenuto(bot, message):
      await message.reply_text(text, disable_web_page_preview=True)
 
 #TODO implementazione rufus.
-@app.on_message(filters.regex(r'^[\.\!\&\/]rufus$', re.IGNORECASE) & filters.text)
+@app.on_message(filters.command('rufus', prefixes=['!', '.', '&', '/']) & filters.text)
 async def rufus(bot, message):
     print('---rufus---')
     with open('volevi.gif', 'rb') as troll:
         await bot.send_animation(message.chat.id, troll)
     print('---end rufus---')
+
+#TODO Pannello consigli
+#TODO commands command
+#TODO sistemare gestione degli errori
+#TODO implementazione JSON
+#TODO custom filters for check admin
 
 
 app.run()
