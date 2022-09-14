@@ -6,7 +6,6 @@ from glob import glob
 from os import chdir
 from re import search
 
-
 def getFile():
     chdir('download')
     file = glob("*.zip")
@@ -26,15 +25,16 @@ def getVersion():
 
 
 
+    
+print('---main.py---')
 version = getVersion()
-
 # Watch out: garbage code ahead!
 try:
     with open('ventoy-version.txt', 'r+') as file:
         if file.read() != version:
             file.write(version)
             downloadFile(f'https://github.com/ventoy/Ventoy/releases/download/v{version}/ventoy-{version}-windows.zip')
-            
+
 except FileNotFoundError:
     with open('ventoy-version.txt', 'w') as file:
         file.write(version)

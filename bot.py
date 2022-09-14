@@ -3,11 +3,12 @@
 from pyrogram import Client, filters, enums, emoji
 from pyrogram.types import InlineKeyboardButton as keybutton
 from pyrogram.types import InlineKeyboardMarkup as keymarkup
-from pyrogram.types import Message, Chat
-import re, math
+from pyrogram.types import Message
+from os.path import basename
+import namespace as ns
 import string as st
 import random as rnd
-import main as ns
+import re, math, main
 
 app = Client(
     'windows italia tool bot',
@@ -18,8 +19,9 @@ app = Client(
 
 #global variable
 status = False
-file = None
 admin = [398290777, 77889335, 828056346]  #denny, alba, kaki
+TARGET = -1001641675174
+MESSAGE = '{} benvenuto capo!'
 
 #custom filter
 def status_filter():
@@ -48,6 +50,13 @@ def admin_filter():
 def getAdmin(message):
     for m in app.get_chat_members(message.chat.id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
         admin.append(int(m.user.id))
+        
+def resetFile():
+    if ns.getFile():
+        with open(main.getFile(), 'r') as file:
+            if ns.getFile().document.file_name != basename(file.name):
+                ns.setFile(None)
+                print('--> reupload')
 
 #bot function
 @app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & status_filter())
@@ -60,26 +69,26 @@ def start(bot, message):
     print('---end start---')
 
 
-@app.on_message(filters.command('reload', prefixes=['!', '.', '&', '/']) & filters.text & admin_filter())     #TODO reload function
+@app.on_message(filters.command('reload', prefixes=['!', '.', '&', '/']) & filters.text & admin_filter())
 def reload(bot, message):
     print('---reload---')
     getAdmin(message)
     print(admin)
     print('---end reload---')
 
-@app.on_message(filters.command('ventoy', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO fix file_id problem + send documents message...
+@app.on_message(filters.command('ventoy', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message...
 async def ventoy(bot, message):
     print('---request file---')
 
-    global file
     chat_id = message.chat.id
-
-    if file:
-        await bot.send_document(chat_id, file.document.file_id)
+    resetFile()
+    
+    if ns.getFile():
+        await bot.send_document(chat_id, ns.getFile().document.file_id)
     else:
-        with open(ns.getFile(), 'rb') as document:
-            file = await bot.send_document(chat_id, document, file_name=ns.getFile().replace('download/', '').strip())
-
+        with open(main.getFile(), 'rb') as document:
+            file= await bot.send_document(chat_id, document, file_name=main.getFile().replace('download/', '').strip())
+            ns.setFile(file)
     print('---end request file---')
 
 
@@ -210,9 +219,6 @@ async def search(bot, message):
 
     print('--end search---')
     
-    
-TARGET = -1001641675174
-MESSAGE = '{} benvenuto capo!'
 
 @app.on_message(filters.chat(TARGET) & filters.new_chat_members)
 async def benvenuto(bot, message):
@@ -220,19 +226,19 @@ async def benvenuto(bot, message):
      text = MESSAGE.format(emoji.SPARKLES, ", ".join(new_members))
      await message.reply_text(text, disable_web_page_preview=True)
 
-#TODO implementazione rufus.
+
 @app.on_message(filters.command('rufus', prefixes=['!', '.', '&', '/']) & filters.text)
 async def rufus(bot, message):
     print('---rufus---')
     with open('volevi.gif', 'rb') as troll:
         await bot.send_animation(message.chat.id, troll)
     print('---end rufus---')
-
+    
+#TODO implementazione rufus.
 #TODO Pannello consigli
 #TODO commands command
 #TODO sistemare gestione degli errori
 #TODO implementazione JSON
-#TODO custom filters for check admin
-
+#TODO beer pong
 
 app.run()
