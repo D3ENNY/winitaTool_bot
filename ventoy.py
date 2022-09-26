@@ -7,16 +7,17 @@ from os import chdir
 from re import search
 
 def getFile():
-    chdir('download')
+    path = 'download/ventoy/'
+    chdir(path)
     file = glob("*.zip")
-    file = 'download/'+file[0]
-    chdir('../')
+    file = path+file[0]
+    chdir('../../')
     return file
 
 
 def downloadFile(url):
-    run(['rm','-rf', 'download'])
-    run(['wget','-P','download', url])
+    run(['rm','-rf', 'download/ventoy'])
+    run(['wget','-P','download/ventoy', url])
 
 def getVersion():
     res = get('https://github.com/ventoy/Ventoy/releases')
@@ -26,7 +27,7 @@ def getVersion():
 
 
     
-print('---main.py---')
+print('---ventoy.py---')
 version = getVersion()
 # Watch out: garbage code ahead!
 try:
