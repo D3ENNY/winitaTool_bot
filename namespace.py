@@ -1,9 +1,21 @@
-file = None
+ventoy = None
+    
+rufus = None
 
-def getFile():
-    global file
-    return file
-
-def setFile(file_id):
-    global file
-    file = file_id
+    ###METTO QUI MA È DA SPOSTARE NEL JSON###
+    
+reply = [
+    
+    "Pong🍺🏓",
+    "Rimbalzo... bordo... bordo... Pong!🍺🏓",
+    "Pong!🍺🏓 Ebbevi giù",
+    "Mancato!",
+    "Due rimbalzi...\n Fuori!",
+    "Sei scarso",
+    "Riprova, sarai più fortunato",
+    "E mettici più grinta",
+    "Bordo del bicchiere",
+    "Fuori campo -_-",
+    "Tira più piano!"
+    
+]
