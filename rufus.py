@@ -27,7 +27,7 @@ print('---rufus.py---')
 version = getVersion()
 
 try:
-    with open('rufus-version.txt', 'r+') as file:
+    with open('version/rufus-version.txt', 'rw') as file:
         if file.read() != version:
             file.write(version)
             downloadFile(f'https://github.com/pbatard/rufus/releases/download/v{version}/rufus-{version}.exe')
