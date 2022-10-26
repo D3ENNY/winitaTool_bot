@@ -10,7 +10,7 @@ reply = [
     "Rimbalzo... bordo... bordo... Pong!🍺🏓",
     "Pong!🍺🏓 Ebbevi giù",
     "Mancato!",
-    "Due rimbalzi...\n Fuori!",
+    "Due rimbalzi...\nFuori!",
     "Sei scarso",
     "Riprova, sarai più fortunato",
     "E mettici più grinta",

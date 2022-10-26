@@ -31,7 +31,7 @@ print('---ventoy.py---')
 version = getVersion()
 # Watch out: garbage code ahead!
 try:
-    with open('ventoy-version.txt', 'r+') as file:
+    with open('version/ventoy-version.txt', 'rw') as file:
         if file.read() != version:
             file.write(version)
             downloadFile(f'https://github.com/ventoy/Ventoy/releases/download/v{version}/ventoy-{version}-windows.zip')

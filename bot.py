@@ -19,7 +19,7 @@ import re, math, ast
 app = Client(
     'windows italia tool bot',
     api_id = 18121640,
-    api_hash = '586ab19953703193dd8d7ad44ea4f3cb',
+    api_hash = '586a18121640b19953703193dd8d7ad44ea4f3cb',
     bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
 )\
 
@@ -39,8 +39,8 @@ def status_filter():
     return filters.create(func)
 
 def admin_filter():
-    async def func(_,__,msg:Message):
-        return True if msg.from_user.id in admin else False
+    async def func(_,__,message):
+        return True if message.from_user.id in admin else False
     return filters.create(func)
 
 #async def admin_filter(_, c: Client, m: Message):
@@ -171,6 +171,7 @@ def reload(bot, message):
     admin.clear()
     getAdmin(message)
     print(admin)
+    print('-->', message.chat.id)
     print('---end reload---')
     
     
@@ -179,7 +180,7 @@ async def getAdminTool(bot, message):
     print('---admin---')
     global admin
     global dev
-    txt = "LISTA ADMIN [windowsItaliaTool_bot](t.me/windowsitaliatool_bot):\n\n"
+    txt = 'LISTA ADMIN [windowsItaliaTool_bot](t.me/windowsitaliatool_bot):\n\n'
     mod = await app.get_users(admin)
     for i in mod:
         if i.id in dev:
@@ -222,19 +223,21 @@ async def rufus(bot, message):
     print('---end request rufus---')
     
     
-@app.on_message(filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE) & filters.text & admin_filter())
+@app.on_message((filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE)) & filters.text & admin_filter())
 async def ping(bot, message):
     print('---ping---')
     await message.reply('Pong 🏓')        
     print('---end ping---')
 
-@app.on_message(filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE) & filters.text & admin_filter())
+@app.on_message((filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE)) & filters.text & admin_filter())
 async def ping(bot, message):
     print('---pong---')
-    await message.reply('Ping 🏓')        
+    await message.reply('Ping 🏓')  
+    usr = await app.get_users(admin)
+    await bot.send_message(message.chat.id, usr)      
     print('---end pong---')
 
-@app.on_message(filters.regex(r'^beer$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]beer$', re.IGNORECASE) & filters.text & admin_filter())
+@app.on_message((filters.regex(r'^beer$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]beer$', re.IGNORECASE)) & filters.text & admin_filter())
 async def beer(bot, message):
     print('---beer---')
     pos = rnd.randint(0, len(ns.reply))
@@ -259,7 +262,7 @@ async def autoKick(bot,message):
 @app.on_message(filters.command('pwgen', prefixes=['!', '.', '&', '/']) & filters.text)
 async def pwgen(bot, message):
     print('---pwgen---')
-    pw= []
+    pw = []
     char = list(st.ascii_letters+st.digits+'!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
     typus = (await app.get_chat(message.chat.id)).type
     rnd.shuffle(char)
@@ -425,12 +428,12 @@ async def helpme(bot, message):
     
 #TODO implementazione JSON
 #TODO Pannello consigli
-#TODO commands command
-#TODO sistemare gestione degli errori
-#TODO unificazione file rufus e ventoy
-#TODO sistemare directory progetto
 #TODO sistemare welcomeBot
-#TODO re captcha matematico
+
+@app.on_message(filters.command('test', prefixes=['!', '.', '&', '/']) & filters.text)   
+async def prova(bot, message):
+    print('test')
+    await bot.send_message(message.chat.id, f'[{emoji.PEAR}](https://www.fondazionenavarra.it/media/k2/items/cache/4d8c9898b5bb88437f053c8b957f47f3_XL.jpg)', disable_web_page_preview= False)
 
 scheduler.start()
 app.run()
