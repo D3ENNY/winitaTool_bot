@@ -22,7 +22,7 @@ app = Client(
     api_hash = '586ab19953703193dd8d7ad44ea4f3cb',
     bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
 )\
-
+#comment
 #global variable
 status = False
 admin = []
