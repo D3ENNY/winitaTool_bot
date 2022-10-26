@@ -27,11 +27,12 @@ print('---rufus.py---')
 version = getVersion()
 
 try:
-    with open('version/rufus-version.txt', 'rw') as file:
+    with open('version/rufus-version.txt', 'r+') as file:
         if file.read() != version:
+            file.truncate(0)
             file.write(version)
             downloadFile(f'https://github.com/pbatard/rufus/releases/download/v{version}/rufus-{version}.exe')
 except FileNotFoundError:
-    with open('ventoy-version.txt', 'w') as file:
+    with open('version/rufus-version.txt', 'w') as file:
         file.write(version)
         downloadFile(f'https://github.com/pbatard/rufus/releases/download/v{version}/rufus-{version}.exe')

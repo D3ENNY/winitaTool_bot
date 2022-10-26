@@ -19,10 +19,10 @@ import re, math, ast
 app = Client(
     'windows italia tool bot',
     api_id = 18121640,
-    api_hash = '586a18121640b19953703193dd8d7ad44ea4f3cb',
+    api_hash = '586ab19953703193dd8d7ad44ea4f3cb',
     bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
 )\
-
+#comment
 #global variable
 status = False
 admin = []
@@ -223,13 +223,13 @@ async def rufus(bot, message):
     print('---end request rufus---')
     
     
-@app.on_message((filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE)) & filters.text & admin_filter())
+@app.on_message((filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def ping(bot, message):
     print('---ping---')
     await message.reply('Pong 🏓')        
     print('---end ping---')
 
-@app.on_message((filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE)) & filters.text & admin_filter())
+@app.on_message((filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def ping(bot, message):
     print('---pong---')
     await message.reply('Ping 🏓')  
@@ -237,10 +237,10 @@ async def ping(bot, message):
     await bot.send_message(message.chat.id, usr)      
     print('---end pong---')
 
-@app.on_message((filters.regex(r'^beer$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]beer$', re.IGNORECASE)) & filters.text & admin_filter())
+@app.on_message((filters.regex(r'^beer$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]beer$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def beer(bot, message):
     print('---beer---')
-    pos = rnd.randint(0, len(ns.reply))
+    pos = rnd.randint(0, len(ns.reply)-1)
     await message.reply(ns.reply[pos])
     print('---end beer---')
     
