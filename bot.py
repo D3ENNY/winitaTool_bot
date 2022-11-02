@@ -14,15 +14,15 @@ import rufus as rufusScript
 import namespace as ns
 import string as st
 import random as rnd
-import re, math, ast
+import re, math, ast, json
 
 app = Client(
     'windows italia tool bot',
     api_id = 18121640,
     api_hash = '586ab19953703193dd8d7ad44ea4f3cb',
     bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
-)\
-#comment
+)
+
 #global variable
 status = False
 admin = []
@@ -30,6 +30,10 @@ dev = [398290777,828056346]
 TARGET = -1001641675174        #win ita debloat betatest
 #TARGET = -742830246
 scheduler = AsyncIOScheduler()
+
+#JSON Time
+with open("resources/JSON/message.json", 'r') as file:
+    jFile = json.load(file)
 
 #custom filter
 def status_filter():
@@ -180,20 +184,20 @@ async def getAdminTool(bot, message):
     print('---admin---')
     global admin
     global dev
-    txt = 'LISTA ADMIN [windowsItaliaTool_bot](t.me/windowsitaliatool_bot):\n\n'
+    txt =jFile["message"]["caption"]["admin_tool"]["txt"]
     mod = await app.get_users(admin)
     for i in mod:
         if i.id in dev:
-            txt += f'{emoji.MAN_TECHNOLOGIST} {i.username} » Dev\n'
+            txt += jFile["message"]["caption"]["admin_tool"]["dev"] % (emoji.MAN_TECHNOLOGIST, i.username)
     for i in mod: 
         if i.id in admin and i.id not in dev and not i.is_bot:
-            txt += f'{emoji.MAN_POLICE_OFFICER} {i.username} » Admin\n'
+            txt += jFile["message"]["caption"]["admin_tool"]["admin"] % (emoji.MAN_POLICE_OFFICER, i.username)
     txt.strip()
     await bot.send_message(message.chat.id, txt)
     print('---end admin---')
     
     
-@app.on_message(filters.command('ventoy', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message...
+@app.on_message(filters.command('ventoy', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message
 async def ventoy(bot, message):
     print('---request ventoy---')
     chat_id = message.chat.id
@@ -208,7 +212,7 @@ async def ventoy(bot, message):
     print('---end request ventoy---')
 
 
-@app.on_message(filters.command('rufus', prefixes=['!', '.', '&', '/']) & filters.text)
+@app.on_message(filters.command('rufus', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message...
 async def rufus(bot, message):
     print('---request rufus---')
     chat_id = message.chat.id
@@ -226,27 +230,24 @@ async def rufus(bot, message):
 @app.on_message((filters.regex(r'^ping$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]ping$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def ping(bot, message):
     print('---ping---')
-    await message.reply('Pong 🏓')        
+    await message.reply(jFile["message"]["caption"]["ping"]["output"] % (emoji.PING_PONG))    
     print('---end ping---')
 
 @app.on_message((filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def ping(bot, message):
     print('---pong---')
-    await message.reply('Ping 🏓')  
-    usr = await app.get_users(admin)
-    await bot.send_message(message.chat.id, usr)      
+    await message.reply(jFile["message"]["caption"]["pong"]["output"] % (emoji.PING_PONG))    
     print('---end pong---')
 
 @app.on_message((filters.regex(r'^beer$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]beer$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def beer(bot, message):
     print('---beer---')
-    pos = rnd.randint(0, len(ns.reply)-1)
-    await message.reply(ns.reply[pos])
+    await message.reply(jFile["message"]["caption"]["beer"]["reply"][rnd.randint(0, len(jFile["message"]["caption"]["beer"]["reply"])-1)])
     print('---end beer---')
     
 
 
-@app.on_message(filters.command('alba', prefixes=['!', '.', '&', '/']) & filters.group)
+@app.on_message(filters.command('freekey', prefixes=['!', '.', '&', '/']) & filters.group)
 async def autoKick(bot,message):
     print('---autoKick---')
     chat_id = message.chat.id
@@ -262,6 +263,7 @@ async def autoKick(bot,message):
 @app.on_message(filters.command('pwgen', prefixes=['!', '.', '&', '/']) & filters.text)
 async def pwgen(bot, message):
     print('---pwgen---')
+    print(message.text)
     pw = []
     char = list(st.ascii_letters+st.digits+'!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
     typus = (await app.get_chat(message.chat.id)).type
@@ -271,11 +273,11 @@ async def pwgen(bot, message):
     try:
         lenght = message.text.split(' ')[1]
         if not lenght.isdigit():
-            await bot.send_message('⚠️ l\' argomento del comando deve essere un numero')
+            await bot.send_message(message.chat.id, jFile["message"]["error"]["pwgen"]["number_error"])
             print('---pwgen error 0---')
-            return 0
+            return 1
     except:
-        await bot.send_message('⚠️ il comando deve avere un argomento numerico')
+        await bot.send_message(message.chat.id, jFile["message"]["error"]["pwgen"]["number_error"])
         print('---pwgen error 1---')
         return 1
 
@@ -284,13 +286,13 @@ async def pwgen(bot, message):
 
     rnd.shuffle(pw)
     pw = ''.join(pw)
-    await bot.send_message(message.from_user.id, f'PASSWORD:\n```{pw}```')
+    await bot.send_message(message.from_user.id, jFile["message"]["caption"]["pwgen"]["output"] % pw)
     if typus != enums.ChatType.PRIVATE:
-        await message.reply('[password mandata in privato](t.me/windowsitaliatool_bot)')
+        await message.reply(jFile["message"]["caption"]["pwgen"]["dm"])
     print('---end pwgen---')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)    #TODO modifica messaggio
+@app.on_message(filters.regex(r'^[\.\!\&\/]calc', re.IGNORECASE) & filters.text)
 async def calc(bot, message):
     print('---calc---')
     txt = message.text.lower().split(' ')
@@ -302,43 +304,43 @@ async def calc(bot, message):
 
     match len(txt):
         case 1:
-            await bot.send_message(chat_id, '⚠️ il comando deve avere almeno un argomento numerico ed un unità di misura\n```(GiB/GB)```')
+            await bot.send_message(chat_id, jFile["message"]["error"]["calc"]["example_error"])
             return 1
         case 2:
             if re.search(r'^[0-9]+[a-z]+$', txt[1]):
-                await bot.send_message(chat_id, '⚠️ il comando deve avere come secondo argomento, staccato dal primo, un unità di misura\n```(GiB/GB)```')
-                return 2
+                await bot.send_message(chat_id, jFile["message"]["error"]["calc"]["second_args_error"])
+                return 1
             elif not txt[1].isdigit():
-                await bot.send_message(chat_id, '⚠️ il primo argomento del comando deve essere un numero')
-                return 4
+                await bot.send_message(chat_id,jFile["message"]["error"]["calc"]["numeric_first_args_error"])
+                return 1
             else:
-                await bot.send_message(chat_id, '⚠️ il comando deve avere come secondo argomento un unità di misura\n```(GiB/GB)```')
-            return 3
+                await bot.send_message(chat_id, jFile["message"]["error"]["calc"]["second_args_error"])
+            return 1
         case _:
             if txt[1].isdigit():
                 n = txt[1]
             else:
-                await bot.send_message(chat_id, '⚠️ il primo argomento del comando deve essere un numero')
-                return 4
+                await bot.send_message(chat_id, jFile["message"]["error"]["calc"]["numeric_first_args_error"])
+                return 1
             if txt[2] == 'gb' or txt[2] == 'gib':
                 unit = txt[2]
             else:
-                await bot.send_message(chat_id, '⚠️ il comando deve avere come secondo argomento un unità di misura\n```(GiB/GB)```')
-                return 5
+                await bot.send_message(chat_id, jFile["message"]["error"]["calc"]["unity_second_args_error"])
+                return 1
     
     if unit == 'gb':
         unit='GB'
         unit2='GiB'
         result = math.floor(((int(n) / 2**30) * 10**9) * 10**3 + 0.5) / 10**3
     elif unit == 'gib':
-        unit = 'Gi'
+        unit = 'GiB'
         unit2='GB'
         result = math.floor(((int(n) / 10**9) * 2**30) * 10**3 + 0.5) / 10**3
-    await message.reply(f'{n} {unit} sono {result} {unit2}')
+    await message.reply(jFile["message"]["caption"]["calc"]["output"] % (n, unit, str(result), unit2))
     print('---end calc---')
 
 
-@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)      #TODO modifica messaggio
+@app.on_message(filters.regex(r'^[\.\!\&\/]search', re.IGNORECASE) & filters.text)
 async def search(bot, message):
     print('---search---')
     GOOGLE_URL='https://www.google.com/search?q='
@@ -353,12 +355,12 @@ async def search(bot, message):
     ]
     try:
         await message.reply(
-            text=f'ricerca per {txt} 👇',
+            text=jFile["message"]["caption"]["search"]["output"] % (txt, emoji.BACKHAND_INDEX_POINTING_DOWN),
             reply_markup=keymarkup(BTN),
             disable_web_page_preview = True
         )
     except:
-        await bot.send_message(message.chat.id, '⚠️ invalid Url')
+        await bot.send_message(message.chat.id, jFile["message"]["error"]["search"]["invalid_url_error"])
 
     print('---end search---')
     
@@ -383,7 +385,7 @@ async def welcome(bot, message):
             keybutton(f'{case[3]}', callback_data=f'captcha_{case[3]}')]
     ])
     
-    await message.reply(f"Quanto fa: {getCaptcha(user_id, 'question')}", reply_markup=BTN)
+    await message.reply(jFile["message"]["caption"]["captcha"]["output"], reply_markup=BTN)
     scheduler.add_job(kick, args=[user_id], id='countdown', trigger='interval', minutes=10)
     
     @app.on_callback_query()
@@ -406,7 +408,7 @@ async def welcome(bot, message):
                     datetime.now() + timedelta(minutes=10)
                 )
                 removeCaptcha(user)
-                await callback_query.edit_message_text('Captcha Risolto!')
+                await callback_query.edit_message_text(jFile["message"]["caption"]["captcha"]["welcome"])
                 scheduler.remove_job('countdown')
             else:
                 await app.answer_callback_query(query_id, text='Captcha non corretto, riprova!', show_alert=True)
@@ -426,15 +428,8 @@ async def helpme(bot, message):
         await bot.send_message(TARGET, 'pirla smutato dalla \'console\'')
     
     
-#TODO implementazione JSON
 #TODO Pannello consigli
 #TODO sistemare welcomeBot
-
-@app.on_message(filters.command('test', prefixes=['!', '.', '&', '/']) & filters.text)   
-async def prova(bot, message):
-    print('test')
-    await bot.send_message(message.chat.id, f'[{emoji.PEAR}](https://www.fondazionenavarra.it/media/k2/items/cache/4d8c9898b5bb88437f053c8b957f47f3_XL.jpg)', disable_web_page_preview= False)
-
+#TODO avviso manda file
 scheduler.start()
 app.run()
-#text=f'Benvenuto{emoji.SPARKLES} {user_name} nel gruppo di windows italia!\nRisolvi al reCAPTCHA qui sotto per verificare che tu non sia un bot, se non rispondi entro 10m verrai automaticamente kickato👇\nInfine leggi le /regole prima di iniziare la tua permanenza nel nostro gruppo.',
