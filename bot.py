@@ -212,7 +212,7 @@ async def ventoy(bot, message):
     print('---end request ventoy---')
 
 
-@app.on_message(filters.command('rufus', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message...
+@app.on_message(filters.command('rufus', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message
 async def rufus(bot, message):
     print('---request rufus---')
     chat_id = message.chat.id
