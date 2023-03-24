@@ -52,8 +52,12 @@
                     "E mettici più grinta",
                     "Bordo del bicchiere",
                     "Fuori campo -_-",
-                    "Tira più piano!"
+                    "Tira più piano!",
+                    "Rimbalzo...\nLa palla vola altissima!\natterra, ed è PONGGG🍺🏓"
                 ]
+            },
+            "bestemmia":{
+                "output":"la bestemmia del giorno:\n```%s```\n\nla nuova bestemmia potrà esser scelta tra:\n%s"
             }
         }
     }

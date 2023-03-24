@@ -1,3 +1,0 @@
-ventoy = None
-    
-rufus = None

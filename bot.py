@@ -4,17 +4,17 @@ from pyrogram import Client, filters, enums, emoji
 from pyrogram.types import InlineKeyboardButton as keybutton
 from pyrogram.types import InlineKeyboardMarkup as keymarkup
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from pyrogram.types import ChatPermissions
-from pyrogram.types import Message
-from datetime import datetime, timedelta
-from os.path import basename
+from pyrogram.types import ChatPermissions, Message
+from os.path import basename, isfile
 from os import remove
-import ventoy as ventoyScript
-import rufus as rufusScript
-import namespace as ns
+from datetime import datetime, timedelta, date
 import string as st
 import random as rnd
 import re, math, ast, json
+
+import resources.scripts.ventoy as ventoyScript
+import resources.scripts.rufus as rufusScript
+import resources.namespace.namespace as ns
 
 app = Client(
     'windows italia tool bot',
@@ -133,16 +133,16 @@ def generateCaptcha():
             
             
 def saveCaptcha(user_id):
-    with open(f'tmp/{user_id}', 'w') as f:
-        f.write(str(generateCaptcha()))
+    with open(f'tmp/{user_id}', 'w') as file:
+        file.write(str(generateCaptcha()))
 
 
 def getCaptcha(user_id, param='all'):
-    with open(f'tmp/{user_id}', 'r') as f:
+    with open(f'tmp/{user_id}', 'r') as file:
         if param == 'all':
-            return ast.literal_eval(f.read())
+            return ast.literal_eval(file.read())
         else:
-            return ast.literal_eval(f.read())[param]
+            return ast.literal_eval(file.read())[param]
 
 
 def removeCaptcha(user_id):
@@ -153,9 +153,8 @@ async def kick(user_id):
     scheduler.remove_job('countdown')
     await app.ban_chat_member(TARGET, user_id)
     await app.unban_chat_member(TARGET, user_id)
-    removeCaptcha(user_id)
-             
-             
+    removeCaptcha(user_id) 
+    
 #bot function
 @app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & status_filter())
 def start(bot, message):
@@ -415,6 +414,8 @@ async def welcome(bot, message):
 
     print('---end welcome---')
     
+        
+        
 @app.on_message(filters.regex(r'^helpme$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]helpme$', re.IGNORECASE) & filters.text & admin_filter())
 async def helpme(bot, message):
         print('---saveme---')
@@ -427,9 +428,9 @@ async def helpme(bot, message):
         ))
         await bot.send_message(TARGET, 'pirla smutato dalla \'console\'')
     
-    
-#TODO Pannello consigli
-#TODO sistemare welcomeBot
-#TODO avviso manda file
+#TODO: Pannello consigli
+#TODO: sistemare welcomeBot
+#TODO: avviso manda file
+
 scheduler.start()
 app.run()
