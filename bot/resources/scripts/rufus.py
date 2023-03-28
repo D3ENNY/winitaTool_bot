@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/ipython
 
 from requests import get
 from subprocess import run
