@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/ipython
 
 from pyrogram import Client, filters, enums, emoji
 from pyrogram.types import InlineKeyboardButton as keybutton
