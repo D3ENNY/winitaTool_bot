@@ -4,17 +4,17 @@ from pyrogram import Client, filters, enums, emoji
 from pyrogram.types import InlineKeyboardButton as keybutton
 from pyrogram.types import InlineKeyboardMarkup as keymarkup
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from pyrogram.types import ChatPermissions
-from pyrogram.types import Message
-from datetime import datetime, timedelta
-from os.path import basename
+from pyrogram.types import ChatPermissions, Message
+from os.path import basename, isfile
 from os import remove
-import ventoy as ventoyScript
-import rufus as rufusScript
-import namespace as ns
+from datetime import datetime, timedelta, date
 import string as st
 import random as rnd
 import re, math, ast, json
+
+import ventoy as ventoyScript
+import rufus as rufusScript
+import namespace as ns
 
 app = Client(
     'windows italia tool bot',
@@ -133,16 +133,16 @@ def generateCaptcha():
             
             
 def saveCaptcha(user_id):
-    with open(f'tmp/{user_id}', 'w') as f:
-        f.write(str(generateCaptcha()))
+    with open(f'tmp/{user_id}', 'w') as file:
+        file.write(str(generateCaptcha()))
 
 
 def getCaptcha(user_id, param='all'):
-    with open(f'tmp/{user_id}', 'r') as f:
+    with open(f'tmp/{user_id}', 'r') as file:
         if param == 'all':
-            return ast.literal_eval(f.read())
+            return ast.literal_eval(file.read())
         else:
-            return ast.literal_eval(f.read())[param]
+            return ast.literal_eval(file.read())[param]
 
 
 def removeCaptcha(user_id):
@@ -155,7 +155,24 @@ async def kick(user_id):
     await app.unban_chat_member(TARGET, user_id)
     removeCaptcha(user_id)
              
-             
+      
+#def saveBestemmia(chat_id):
+#    path = f'resources/commands/bestemmie/{chat_id}'
+#    if not isfile(path):
+#        with open(f'resources/commands/bestemmie/{chat_id}', 'w') as file:
+#            file.write(date.today())
+#        
+#
+#def getBestemmia(chat_id):
+#    with open(f'resources/commands/bestemmie/{chat_id}', 'r') as file:
+#        date = intfile.read().split("-")
+#    return datetime(date[0], date[1], date[2])
+#    
+#    
+#def removeBestemmia(chat_id):
+#    remove(f'resources/commands/bestemmie/{chat_id}')  
+
+    
 #bot function
 @app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & status_filter())
 def start(bot, message):
@@ -363,69 +380,89 @@ async def search(bot, message):
         await bot.send_message(message.chat.id, jFile["message"]["error"]["search"]["invalid_url_error"])
 
     print('---end search---')
-    
+#    
+#
+#@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
+#async def welcome(bot, message):
+#    print('---welcome---')
+#    user_name = message.from_user.first_name
+#    user_id = message.from_user.id
+#    await app.restrict_chat_member(TARGET, user_id, ChatPermissions())
+#    saveCaptcha(user_id)
+#    captcha = getCaptcha(user_id)
+#    case = [captcha['ans_n1'], captcha['ans_n2'], captcha['ans_n3'], captcha['right_Ans']]
+#    rnd.shuffle(case)
+#    
+#    BTN = keymarkup([
+#        [
+#            keybutton(f'{case[0]}', callback_data=f'captcha_{case[0]}'),
+#            keybutton(f'{case[1]}', callback_data=f'captcha_{case[1]}')],
+#        [
+#            keybutton(f'{case[2]}', callback_data=f'captcha_{case[2]}'),
+#            keybutton(f'{case[3]}', callback_data=f'captcha_{case[3]}')]
+#    ])
+#    
+#    await message.reply(jFile["message"]["caption"]["captcha"]["output"], reply_markup=BTN)
+#    scheduler.add_job(kick, args=[user_id], id='countdown', trigger='interval', minutes=10)
+#    
+#    @app.on_callback_query()
+#    async def answer(client, callback_query):
+#        query = callback_query.data
+#        query_id = callback_query.id
+#        user = callback_query.from_user.id
+#        if 'captcha_' in query:
+#            if query == f"captcha_{getCaptcha(user_id, 'right_Ans')}":
+#                await app.restrict_chat_member(
+#                    TARGET,
+#                    user_id,
+#                    ChatPermissions(
+#                        can_send_messages=True,
+#                        can_send_media_messages=True,
+#                        can_send_other_messages=True,
+#                        can_send_polls=True,
+#                        can_add_web_page_previews=True,
+#                    ),
+#                    datetime.now() + timedelta(minutes=10)
+#                )
+#                removeCaptcha(user)
+#                await callback_query.edit_message_text(jFile["message"]["caption"]["captcha"]["welcome"])
+#                scheduler.remove_job('countdown')
+#            else:
+#                await app.answer_callback_query(query_id, text='Captcha non corretto, riprova!', show_alert=True)
+#
+#    print('---end welcome---')
+#    
+#@app.on_message(filters.command('bestemmia') | filters.text)
+#async def bestemmia(bot, message):
+#    print('---bestemmia---')
+#    chat_id = message.chat.it
+#    
+#    saveBestemmia(chat_id)
+#    bestemmia = bst.filtred_random()
+#    
+#    lastDate = getBestemmia(chat_id)
+#    today = date.today()
+#    nextDate = today + timedelta( days= 1)
+#
+#    if lastDate < today:
+#        await bot.send_message(chat_id, jFile['message']['caption']['bestemmia']['output'] % bestemmia, str(nextDate))
+#        
+#    elif lastDate == today:
+        
 
-@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
-async def welcome(bot, message):
-    print('---welcome---')
-    user_name = message.from_user.first_name
-    user_id = message.from_user.id
-    await app.restrict_chat_member(TARGET, user_id, ChatPermissions())
-    saveCaptcha(user_id)
-    captcha = getCaptcha(user_id)
-    case = [captcha['ans_n1'], captcha['ans_n2'], captcha['ans_n3'], captcha['right_Ans']]
-    rnd.shuffle(case)
     
-    BTN = keymarkup([
-        [
-            keybutton(f'{case[0]}', callback_data=f'captcha_{case[0]}'),
-            keybutton(f'{case[1]}', callback_data=f'captcha_{case[1]}')],
-        [
-            keybutton(f'{case[2]}', callback_data=f'captcha_{case[2]}'),
-            keybutton(f'{case[3]}', callback_data=f'captcha_{case[3]}')]
-    ])
     
-    await message.reply(jFile["message"]["caption"]["captcha"]["output"], reply_markup=BTN)
-    scheduler.add_job(kick, args=[user_id], id='countdown', trigger='interval', minutes=10)
-    
-    @app.on_callback_query()
-    async def answer(client, callback_query):
-        query = callback_query.data
-        query_id = callback_query.id
-        user = callback_query.from_user.id
-        if 'captcha_' in query:
-            if query == f"captcha_{getCaptcha(user_id, 'right_Ans')}":
-                await app.restrict_chat_member(
-                    TARGET,
-                    user_id,
-                    ChatPermissions(
-                        can_send_messages=True,
-                        can_send_media_messages=True,
-                        can_send_other_messages=True,
-                        can_send_polls=True,
-                        can_add_web_page_previews=True,
-                    ),
-                    datetime.now() + timedelta(minutes=10)
-                )
-                removeCaptcha(user)
-                await callback_query.edit_message_text(jFile["message"]["caption"]["captcha"]["welcome"])
-                scheduler.remove_job('countdown')
-            else:
-                await app.answer_callback_query(query_id, text='Captcha non corretto, riprova!', show_alert=True)
-
-    print('---end welcome---')
-    
-@app.on_message(filters.regex(r'^helpme$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]helpme$', re.IGNORECASE) & filters.text & admin_filter())
-async def helpme(bot, message):
-        print('---saveme---')
-        await app.restrict_chat_member(TARGET, 398290777 , ChatPermissions(
-            can_send_messages=True,
-            can_send_media_messages=True,
-            can_send_other_messages=True,
-            can_send_polls=True,
-            can_add_web_page_previews=True,
-        ))
-        await bot.send_message(TARGET, 'pirla smutato dalla \'console\'')
+#@app.on_message(filters.regex(r'^helpme$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]helpme$', re.IGNORECASE) & filters.text & admin_filter())
+#async def helpme(bot, message):
+#        print('---saveme---')
+#        await app.restrict_chat_member(TARGET, 398290777 , ChatPermissions(
+#            can_send_messages=True,
+#            can_send_media_messages=True,
+#            can_send_other_messages=True,
+#            can_send_polls=True,
+#            can_add_web_page_previews=True,
+#        ))
+#        await bot.send_message(TARGET, 'pirla smutato dalla \'console\'')
     
     
 #TODO Pannello consigli

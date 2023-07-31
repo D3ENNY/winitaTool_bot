@@ -54,6 +54,9 @@
                     "Fuori campo -_-",
                     "Tira più piano!"
                 ]
+            },
+            "bestemmia":{
+                "output":"la bestemmia del giorno:\n```%s```\n\nla nuova bestemmia potrà esser scelta tra:\n%s"
             }
         }
     }

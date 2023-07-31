@@ -20,7 +20,7 @@ def downloadFile(url):
 
 def getVersion():
     res = get('https://rufus.ie/it/#')
-    x = search(r'Rufus (\d.\d\d)', res.text)
+    x = search(r'rufus-(\d.\d).exe', res.text)
     return x.group(1)
 
 print('---rufus.py---')
