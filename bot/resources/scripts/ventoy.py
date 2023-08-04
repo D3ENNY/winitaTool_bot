@@ -38,6 +38,6 @@ try:
             downloadFile(f'https://github.com/ventoy/Ventoy/releases/download/v{version}/ventoy-{version}-windows.zip')
 
 except FileNotFoundError:
-    with open('version/ventoy-version.txt', 'w') as file:
+    with open('resources/version/ventoy-version.txt', 'w') as file:
         file.write(version)
         downloadFile(f'https://github.com/ventoy/Ventoy/releases/download/v{version}/ventoy-{version}-windows.zip')

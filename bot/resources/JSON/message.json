@@ -5,10 +5,10 @@
                 "number_error":"⚠️ l' argomento del comando deve essere un numero"
             },
             "calc":{
-                "example_error":"⚠️ il comando deve avere almeno un argomento numerico ed un unità di misura\n```(GiB/GB)```\nes:\n\/calc 1024 gb",
-                "second_args_error":"⚠️ il comando deve avere come secondo argomento, staccato dal primo, un unità di misura\n```(GiB/GB)```",
+                "example_error":"⚠️ il comando deve avere almeno un argomento numerico ed un unità di misura\n`(GiB/GB)`\nes:\n\/calc 1024 gb",
+                "second_args_error":"⚠️ il comando deve avere come secondo argomento, staccato dal primo, un unità di misura\n`(GiB/GB)`",
                 "numeric_first_args_error":"⚠️ il primo argomento del comando deve essere un numero",
-                "unity_sececond_args_error":"⚠️ il comando deve avere come secondo argomento un unità di misura\n```(GiB/GB)```"
+                "unity_sececond_args_error":"⚠️ il comando deve avere come secondo argomento un unità di misura\n`(GiB/GB)`"
             },
             "search":{
                 "invalid_url_error":"⚠️ invalid Url"
@@ -16,14 +16,14 @@
         },
         "caption":{
             "pwgen":{
-                "output":"PASSWORD:\n```%s```",
+                "output":"PASSWORD:\n`%s`",
                 "dm":"[password mandata in privato](t.me/windowsitaliatool_bot)"
             },
             "calc":{
-                "output":"**Convertitore GB - GiB**\n\n I **GB** secondo cui comprate i vostri **HDD** sono indicati secondo un'unità di grandezza approssimata con lo standard **decimale**, **Windows** invece effettua l'approssimazione su base **binaria**\n\nLa base **Decimale** viene indicata come **GB (Gigabyte)**\nLa base **Binaria** viene indicata come **GiB (Gibibyte)**\n\n__**Esempio** 500 GB (che corrispondono a  500'000'000'000 byte) sono convertiti a 465 GiB\nIl PC non ha diminuito lo spazio arbitrariamente, ma sta semplicemente indicando lo spazio con una conversione differente da quella indicata dal rivenditore__\n\nDopo questa breve introduzione, ecco la conversione da te richiesta:\n\n```%s %s sono %s %s```"
+                "output":"**Convertitore GB - GiB**\n\n I **GB** secondo cui comprate i vostri **HDD** sono indicati secondo un'unità di grandezza approssimata con lo standard **decimale**, **Windows** invece effettua l'approssimazione su base **binaria**\n\nLa base **Decimale** viene indicata come **GB (Gigabyte)**\nLa base **Binaria** viene indicata come **GiB (Gibibyte)**\n\n__**Esempio** 500 GB (che corrispondono a  500'000'000'000 byte) sono convertiti a 465 GiB\nIl PC non ha diminuito lo spazio arbitrariamente, ma sta semplicemente indicando lo spazio con una conversione differente da quella indicata dal rivenditore__\n\nDopo questa breve introduzione, ecco la conversione da te richiesta:\n\n`%s %s sono %s %s`"
             },
             "search":{
-                "output":"ricerca per ```%s``` %s"
+                "output":"ricerca per `%s` %s"
             },
             "captcha":{
                 "output":"Benvenuto{emoji.SPARKLES} {user_name} nel gruppo di windows italia!\nRisolvi al reCAPTCHA qui sotto per verificare che tu non sia un bot, se non rispondi entro 10m verrai automaticamente kickato{emoji.BACKHAND_INDEX_POINTING_DOWN}\nInfine leggi le /regole prima di iniziare la tua permanenza nel nostro gruppo.",
@@ -48,7 +48,6 @@
                     "Mancato!",
                     "Due rimbalzi...\nFuori!",
                     "Sei scarso",
-                    "Riprova, sarai più fortunato",
                     "E mettici più grinta",
                     "Bordo del bicchiere",
                     "Fuori campo -_-",
@@ -56,8 +55,14 @@
                     "Rimbalzo...\nLa palla vola altissima!\natterra, ed è PONGGG🍺🏓"
                 ]
             },
-            "bestemmia":{
-                "output":"la bestemmia del giorno:\n```%s```\n\nla nuova bestemmia potrà esser scelta tra:\n%s"
+            "progress":{
+                "bar":"**CARICAMENTO IN CORSO**\n[[ ]] "
+            },
+            "rufus":{
+                "description":"**Procedura per Installare Windows sul tuo PC\n\n\nPrerequisiti:**\n-Iso di Windows\n-Pendrive da 8gb (almeno)\n-[Rufus](https://t.me/windowsitaliadiscussione/271) (Sito Ufficiale [QUI](https://rufus.ie/en/))\n\n\n**Procedura:**\n\n**1.** Inserisci la Pendrive che vuoi utilizzare per installare Windows\n\n**2.** Apri Rufus\n\n**3.** Seleziona la iso appena scaricata\n\n**4.** Premi avvia (la seguente procedura formatterà la pendrive e quindi cancellerà tutto il suo contenuto, al termine potrai utilizzare la pendrive per installare Windows)\n\n\n**FAQ:**\n\n***1.** Se il tuo PC è molto vecchio potrebbe non avere la \"tecnologia\" Uefi, perciò dovrai effettuare nuovamente la procedura cambiando due opzioni: al posto di GPT dovrai selezionare MBR e al posto di Uefi dovrai selezionare BIOS (Uefi)\n\n***2.** Se il tuo PC è molto vecchio potrebbe non supportare la formattazione da pendrive partizionate in Fat32 né tantomeno NTFS\n\n***3.** Se hai problemi ad avviare l'installazione di windows (ricordiamo che per far partire l'installazione è necessario modificare il boot order dalla schermata del BIOS affinché avvii, come prima opzione, la pendrive"
+            },
+            "ventoy":{
+                "description":"**Procedura per avviare (più) ISO via Ventoy\n\n\nPrerequisiti:**\n-ISO di Windows\n-Pendrive da 8gb (almeno)\n-Ventoy (Sito Ufficiale [QUI](https://www.ventoy.net/en/download.html))\n\n**Procedura:**\n\n**1.** Estrai il contenuto dello zip appena scaricato \"`ventoy-1.0.79-windows.zip`\" sul desktop\n\n**2.** Collega una Chiavetta\n\n**3.** Apri la cartella e clicca su Ventoy2Disk\n\n**4.** Seleziona la Pendrive appena inserita e clicca \"**Install**\" __(la seguente procedura formatterà la pendrive e quindi cancellerà tutto il suo contenuto)__\n\n5. Al Termine si creeranno 2 \"USB\" (o 1 in alcuni casi*), ti basta copiare la iso (precedentemente scaricata) nella USB (senza bisogno di flashare o altro)\n\n**6.** La pendrive appena creata sarà utilizzabile come una normale USB, ma ci sarà una schermata all'avvio del pc che ti permetterà di avviare le ISO inserite\n\n**7.** La procedura di installazione andrà fatta una sola volta, se la USB non verrà formattata, non ci sarà bisogno di reinstallare Ventoy, basterà copiare la ISO che si vuole avviare"
             }
         }
     }
