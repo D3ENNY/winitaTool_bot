@@ -20,8 +20,8 @@ def downloadFile(url):
 
 def getVersion():
     res = get('https://rufus.ie/it/#')
-    x = search(r'Rufus (\d.\d\d)', res.text)
-    return x.group(1)
+    x = search(r'rufus-(\d.\d\d).exe|rufus-(\d.\d).exe', res.text)
+    return x.group(1) if x.group(1) else x.group(2)
 
 print('---rufus.py---')
 version = getVersion()
@@ -33,6 +33,6 @@ try:
             file.write(version)
             downloadFile(f'https://github.com/pbatard/rufus/releases/download/v{version}/rufus-{version}.exe')
 except FileNotFoundError:
-    with open('version/rufus-version.txt', 'w') as file:
+    with open('resources/version/rufus-version.txt', 'w') as file:
         file.write(version)
         downloadFile(f'https://github.com/pbatard/rufus/releases/download/v{version}/rufus-{version}.exe')
