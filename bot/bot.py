@@ -10,7 +10,7 @@ from os import remove
 from datetime import datetime, timedelta, date
 import string as st
 import random as rnd
-import re, math, ast, json
+import re, math, ast, json, time
 
 import resources.scripts.ventoy as ventoyScript
 import resources.scripts.rufus as rufusScript
@@ -73,12 +73,12 @@ def resetFile(url):
         with open(url, 'r') as file:
             if ns.ventoy.document.file_name != basename(file.name):
                 ns.ventoy = None
-                print('--> reupload')
+                print('--> reupload ventoy')
     elif 'rufus' in url and ns.rufus :
         with open(url, 'r') as file:
             if ns.rufus.document.file_name != basename(file.name):
                 ns.rufus = None
-                print('--> reupload')
+                print('--> reupload rufus')
 
 
 def generateCaptcha():
@@ -153,17 +153,32 @@ async def kick(user_id):
     scheduler.remove_job('countdown')
     await app.ban_chat_member(TARGET, user_id)
     await app.unban_chat_member(TARGET, user_id)
-    removeCaptcha(user_id) 
+    removeCaptcha(user_id)
+    
+async def progressFile(current, total, message): 
+    progress = current * 100 / total
+    cnt = math.floor((int(progress)*10)/100)
+    txt = message.text.split("[ ]")
+    
+    try:
+        if ns.progressBarTmp != cnt:
+            ns.progressBarTmp = cnt    
+            await message.edit_text(txt[0]+'='*cnt+'>'+'  '*(10-cnt)+txt[1]+f'{progress:.1f}'+'%')
+    except Exception: pass
+    
+    if int(progress) == 100:
+        time.sleep(3)
+        await message.delete()
+        ns.progressBarTmp = 0
     
 #bot function
-@app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & status_filter())
+@app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & filters.group & status_filter())
 def start(bot, message):
     print('---start---')
     global status 
     getAdmin(message)
     status = True
     print(admin)
-    print('-->', message.chat.id)
     print('---end start---')
 
 
@@ -174,7 +189,6 @@ def reload(bot, message):
     admin.clear()
     getAdmin(message)
     print(admin)
-    print('-->', message.chat.id)
     print('---end reload---')
     
     
@@ -194,8 +208,7 @@ async def getAdminTool(bot, message):
     txt.strip()
     await bot.send_message(message.chat.id, txt)
     print('---end admin---')
-    
-    
+
 @app.on_message(filters.command('ventoy', prefixes=['!', '.', '&', '/']) & filters.text)     #TODO send documents message
 async def ventoy(bot, message):
     print('---request ventoy---')
@@ -203,10 +216,17 @@ async def ventoy(bot, message):
     resetFile(ventoyScript.getFile())
     
     if ns.ventoy:
-        await bot.send_document(chat_id, ns.ventoy.document.file_id)
+        await app.send_chat_action(chat_id, enums.ChatAction.UPLOAD_DOCUMENT)
+        file = await bot.send_document(chat_id, ns.ventoy.document.file_id)
+        await file.reply(jFile["message"]["caption"]["ventoy"]["description"])
+        await app.send_chat_action(chat_id, enums.ChatAction.CANCEL)
     else:
         with open(ventoyScript.getFile(), 'rb') as document:
-            file= await bot.send_document(chat_id, document, file_name=ventoyScript.getFile().replace('download/ventoy/', '').strip())
+            msg = await bot.send_message(chat_id, jFile["message"]["caption"]["progress"]["bar"])
+            await app.send_chat_action(chat_id, enums.ChatAction.UPLOAD_DOCUMENT)
+            file = await bot.send_document(chat_id, document, file_name=ventoyScript.getFile().replace('download/ventoy/', '').strip(), progress=progressFile, progress_args=(msg, ))
+            await file.reply(jFile["message"]["caption"]["ventoy"]["description"])
+            await app.send_chat_action(chat_id, enums.ChatAction.CANCEL)
             ns.ventoy = file
     print('---end request ventoy---')
 
@@ -218,10 +238,17 @@ async def rufus(bot, message):
     resetFile(rufusScript.getFile())
 
     if ns.rufus:
-        await bot.send_document(chat_id, ns.rufus.document.file_id)
+        await app.send_chat_action(chat_id, enums.ChatAction.UPLOAD_DOCUMENT)        
+        file = await bot.send_document(chat_id, ns.rufus.document.file_id)
+        await file.reply(jFile["message"]["caption"]["rufus"]["description"])
+        await app.send_chat_action(chat_id, enums.ChatAction.CANCEL)
     else:
         with open(rufusScript.getFile(), 'rb') as document:
-            file = await bot.send_document(chat_id, document, file_name=rufusScript.getFile().replace('download/rufus/','').strip())
+            msg = await bot.send_message(chat_id, jFile["message"]["caption"]["progress"]["bar"])
+            await app.send_chat_action(chat_id, enums.ChatAction.UPLOAD_DOCUMENT)
+            file = await bot.send_document(chat_id, document, file_name=rufusScript.getFile().replace('download/rufus/','').strip(), progress=progressFile, progress_args=(msg, ))
+            await file.reply(jFile["message"]["caption"]["rufus"]["description"])
+            await app.send_chat_action(chat_id, enums.ChatAction.CANCEL)
             ns.rufus = file
     print('---end request rufus---')
     
@@ -249,7 +276,7 @@ async def beer(bot, message):
 @app.on_message(filters.command('freekey', prefixes=['!', '.', '&', '/']) & filters.group)
 async def autoKick(bot,message):
     print('---autoKick---')
-    chat_id = message.chat.id
+    chat_id = message.chat.id   
     await bot.ban_chat_member(chat_id, message.from_user.id)
     await bot.send_message(chat_id, '-_-')
     await bot.send_message(chat_id, f'{message.from_user.username} è astato automaticamente terminato')
