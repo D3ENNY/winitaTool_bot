@@ -4,6 +4,9 @@
 # PYTHON
 __pycache__/
 
+#enviroments
+venv/
+
 #BOT
 download/
 resources/JSON/info.json

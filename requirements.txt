@@ -1,0 +1,6 @@
+openai
+pyrogram
+tgcrypto
+apscheduler
+requests
+

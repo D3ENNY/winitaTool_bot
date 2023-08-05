@@ -462,7 +462,6 @@ async def helpme(bot, message):
     
 #TODO: Pannello consigli
 #TODO: sistemare welcomeBot
-#TODO: avviso manda file
 
 scheduler.start()
 app.run()
