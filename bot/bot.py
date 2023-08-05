@@ -16,24 +16,29 @@ import resources.scripts.ventoy as ventoyScript
 import resources.scripts.rufus as rufusScript
 import resources.namespace.namespace as ns
 
-app = Client(
-    'windows italia tool bot',
-    api_id = 18121640,
-    api_hash = '586ab19953703193dd8d7ad44ea4f3cb',
-    bot_token = '5545133091:AAH6rS895ubCENyB-BzpczesbRcY2f8co9w'
-)
-
 #global variable
 status = False
 admin = []
 dev = [398290777,828056346]
-TARGET = -1001641675174        #win ita debloat betatest
+TARGET = -1001641675174 
+#win ita debloat betatest
 #TARGET = -742830246
 scheduler = AsyncIOScheduler()
 
 #JSON Time
 with open("resources/JSON/message.json", 'r') as file:
     jFile = json.load(file)
+    
+with open("resources/JSON/info.json", 'r') as file:
+    info = json.load(file)
+    
+#initialize client
+app = Client(
+    info['name'],
+    api_id = info['api_id'],
+    api_hash = info['api_hash'],
+    bot_token = info['bot_token']
+)
 
 #custom filter
 def status_filter():
