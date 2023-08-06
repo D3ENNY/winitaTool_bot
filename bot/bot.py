@@ -10,7 +10,7 @@ from os import remove
 from datetime import datetime, timedelta, date
 import string as st
 import random as rnd
-import re, math, ast, json, time
+import re, math, ast, json, time, openai
 
 import resources.scripts.ventoy as ventoyScript
 import resources.scripts.rufus as rufusScript
@@ -34,10 +34,10 @@ with open("resources/JSON/info.json", 'r') as file:
     
 #initialize client
 app = Client(
-    info['name'],
-    api_id = info['api_id'],
-    api_hash = info['api_hash'],
-    bot_token = info['bot_token']
+    info['telegram']['name'],
+    api_id = info['telegram']['api_id'],
+    api_hash = info['telegram']['api_hash'],
+    bot_token = info['telegram']['bot_token']
 )
 
 #custom filter
@@ -395,56 +395,68 @@ async def search(bot, message):
 
     print('---end search---')
     
-
-@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
-async def welcome(bot, message):
-    print('---welcome---')
-    user_name = message.from_user.first_name
-    user_id = message.from_user.id
-    await app.restrict_chat_member(TARGET, user_id, ChatPermissions())
-    saveCaptcha(user_id)
-    captcha = getCaptcha(user_id)
-    case = [captcha['ans_n1'], captcha['ans_n2'], captcha['ans_n3'], captcha['right_Ans']]
-    rnd.shuffle(case)
+@app.on_message(filters.regex(r'^[\.\!\&\/]gpt', re.IGNORECASE) & filters.text)
+async def gpt(bot, message):
+    prompt = re.sub(r'^[\.\!\&\/]gpt','', message.text.lower()).strip()
+    openai.api_key=info["openai"]["api_key"]
     
-    BTN = keymarkup([
-        [
-            keybutton(f'{case[0]}', callback_data=f'captcha_{case[0]}'),
-            keybutton(f'{case[1]}', callback_data=f'captcha_{case[1]}')],
-        [
-            keybutton(f'{case[2]}', callback_data=f'captcha_{case[2]}'),
-            keybutton(f'{case[3]}', callback_data=f'captcha_{case[3]}')]
-    ])
+    res = openai.Completion.create(
+        engine = "gpt-3.5-turbo",
+        prompt = prompt
+    )
     
-    await message.reply(jFile["message"]["caption"]["captcha"]["output"], reply_markup=BTN)
-    scheduler.add_job(kick, args=[user_id], id='countdown', trigger='interval', minutes=10)
+    out = res.choise[0].text
+    bot.send_message(out)
     
-    @app.on_callback_query()
-    async def answer(client, callback_query):
-        query = callback_query.data
-        query_id = callback_query.id
-        user = callback_query.from_user.id
-        if 'captcha_' in query:
-            if query == f"captcha_{getCaptcha(user_id, 'right_Ans')}":
-                await app.restrict_chat_member(
-                    TARGET,
-                    user_id,
-                    ChatPermissions(
-                        can_send_messages=True,
-                        can_send_media_messages=True,
-                        can_send_other_messages=True,
-                        can_send_polls=True,
-                        can_add_web_page_previews=True,
-                    ),
-                    datetime.now() + timedelta(minutes=10)
-                )
-                removeCaptcha(user)
-                await callback_query.edit_message_text(jFile["message"]["caption"]["captcha"]["welcome"])
-                scheduler.remove_job('countdown')
-            else:
-                await app.answer_callback_query(query_id, text='Captcha non corretto, riprova!', show_alert=True)
-
-    print('---end welcome---')
+#@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
+#async def welcome(bot, message):
+#    print('---welcome---')
+#    user_name = message.from_user.first_name
+#    user_id = message.from_user.id
+#    await app.restrict_chat_member(TARGET, user_id, ChatPermissions())
+#    saveCaptcha(user_id)
+#    captcha = getCaptcha(user_id)
+#    case = [captcha['ans_n1'], captcha['ans_n2'], captcha['ans_n3'], captcha['right_Ans']]
+#    rnd.shuffle(case)
+#    
+#    BTN = keymarkup([
+#        [
+#            keybutton(f'{case[0]}', callback_data=f'captcha_{case[0]}'),
+#            keybutton(f'{case[1]}', callback_data=f'captcha_{case[1]}')],
+#        [
+#            keybutton(f'{case[2]}', callback_data=f'captcha_{case[2]}'),
+#            keybutton(f'{case[3]}', callback_data=f'captcha_{case[3]}')]
+#    ])
+#    
+#    await message.reply(jFile["message"]["caption"]["captcha"]["output"], reply_markup=BTN)
+#    scheduler.add_job(kick, args=[user_id], id='countdown', trigger='interval', minutes=10)
+#    
+#    @app.on_callback_query()
+#    async def answer(client, callback_query):
+#        query = callback_query.data
+#        query_id = callback_query.id
+#        user = callback_query.from_user.id
+#        if 'captcha_' in query:
+#            if query == f"captcha_{getCaptcha(user_id, 'right_Ans')}":
+#                await app.restrict_chat_member(
+#                    TARGET,
+#                    user_id,
+#                    ChatPermissions(
+#                        can_send_messages=True,
+#                        can_send_media_messages=True,
+#                        can_send_other_messages=True,
+#                        can_send_polls=True,
+#                        can_add_web_page_previews=True,
+#                    ),
+#                    datetime.now() + timedelta(minutes=10)
+#                )
+#                removeCaptcha(user)
+#                await callback_query.edit_message_text(jFile["message"]["caption"]["captcha"]["welcome"])
+#                scheduler.remove_job('countdown')
+#            else:
+#                await app.answer_callback_query(query_id, text='Captcha non corretto, riprova!', show_alert=True)
+#
+#    print('---end welcome---')
     
         
         
