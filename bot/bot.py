@@ -395,18 +395,18 @@ async def search(bot, message):
 
     print('---end search---')
     
-@app.on_message(filters.regex(r'^[\.\!\&\/]gpt', re.IGNORECASE) & filters.text)
-async def gpt(bot, message):
-    prompt = re.sub(r'^[\.\!\&\/]gpt','', message.text.lower()).strip()
-    openai.api_key=info["openai"]["api_key"]
-    
-    res = openai.Completion.create(
-        engine = "gpt-3.5-turbo",
-        prompt = prompt
-    )
-    
-    out = res.choise[0].text
-    bot.send_message(out)
+#@app.on_message(filters.regex(r'^[\.\!\&\/]gpt', re.IGNORECASE) & filters.text)
+#async def gpt(bot, message):
+#    prompt = re.sub(r'^[\.\!\&\/]gpt','', message.text.lower()).strip()
+#    openai.api_key=info["openai"]["api_key"]
+#    
+#    res = openai.Completion.create(
+#        engine = "gpt-3.5-turbo",
+#        prompt = prompt
+#    )
+#    
+#    out = res.choise[0].text
+#    bot.send_message(out)
     
 #@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
 #async def welcome(bot, message):
