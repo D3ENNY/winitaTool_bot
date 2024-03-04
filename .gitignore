@@ -10,9 +10,8 @@ venv/
 
 #BOT
 download/
-resources/JSON/info.json
-version/rufus-version.txt
-version/ventoy-version.txt
+bot/resources/JSON/info.json
+bot/resources/version/*
 windows italia tool bot.session*
 =======
 .vscode/
