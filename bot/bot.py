@@ -10,7 +10,7 @@ from os import remove
 from datetime import datetime, timedelta, date
 import string as st
 import random as rnd
-import re, math, ast, json, time, openai
+import re, math, ast, json, time
 
 import resources.scripts.ventoy as ventoyScript
 import resources.scripts.rufus as rufusScript
@@ -20,8 +20,8 @@ import resources.namespace.namespace as ns
 status = False
 admin = []
 dev = [398290777,828056346]
-TARGET = -1001641675174 
-#win ita debloat betatest
+TARGET = -1001641675174 #win ita debloat betatest
+LOG_CHANNEL = -1001919690736 #log channel
 #TARGET = -742830246
 scheduler = AsyncIOScheduler()
 
@@ -67,7 +67,7 @@ def admin_filter():
 #function      
 def getAdmin(message):
     global admin
-    admin = [77889335]  #kaki
+    admin = [77889335]   #kaki
     admin += dev         #denny - alba4k
     for m in app.get_chat_members(message.chat.id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
         admin.append(int(m.user.id))
@@ -78,6 +78,7 @@ def resetFile(url):
         with open(url, 'r') as file:
             if ns.ventoy.document.file_name != basename(file.name):
                 ns.ventoy = None
+                
                 print('--> reupload ventoy')
     elif 'rufus' in url and ns.rufus :
         with open(url, 'r') as file:
@@ -175,6 +176,10 @@ async def progressFile(current, total, message):
         time.sleep(3)
         await message.delete()
         ns.progressBarTmp = 0
+        
+async def manageException(user, command, exception):
+    txt = f'{emoji.WARNING} errore in: {command}.\n{user}' 
+    bot.send_message(LOG_CHANNEL, )
     
 #bot function
 @app.on_message(filters.command('start', prefixes=['!', '.', '&', '/']) & filters.text & filters.group & status_filter())
@@ -266,7 +271,7 @@ async def ping(bot, message):
 
 @app.on_message((filters.regex(r'^pong$', re.IGNORECASE) | filters.regex(r'^[\.\!\&\/]pong$', re.IGNORECASE)) & filters.text & (admin_filter() | filters.private))
 async def ping(bot, message):
-    print('---pong---')
+    print('---pong---\n'+message.from_user)
     await message.reply(jFile["message"]["caption"]["pong"]["output"] % (emoji.PING_PONG))    
     print('---end pong---')
 
@@ -294,12 +299,13 @@ async def autoKick(bot,message):
 @app.on_message(filters.command('pwgen', prefixes=['!', '.', '&', '/']) & filters.text)
 async def pwgen(bot, message):
     print('---pwgen---')
-    print(message.text)
     pw = []
     char = list(st.ascii_letters+st.digits+'!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
     typus = (await app.get_chat(message.chat.id)).type
     rnd.shuffle(char)
     lenght = None
+
+    #filter for number above 5000, and response with number too large 
 
     try:
         lenght = message.text.split(' ')[1]
@@ -312,14 +318,15 @@ async def pwgen(bot, message):
         print('---pwgen error 1---')
         return 1
 
-    for i in range(int(lenght)):
-        pw.append(rnd.choice(char))
+    if lenght <= 5000:
+        for i in range(int(lenght)):
+            pw.append(rnd.choice(char))
 
-    rnd.shuffle(pw)
-    pw = ''.join(pw)
-    await bot.send_message(message.from_user.id, jFile["message"]["caption"]["pwgen"]["output"] % pw)
-    if typus != enums.ChatType.PRIVATE:
-        await message.reply(jFile["message"]["caption"]["pwgen"]["dm"])
+        rnd.shuffle(pw)
+        pw = ''.join(pw)
+        await bot.send_message(message.from_user.id, jFile["message"]["caption"]["pwgen"]["output"] % pw)
+        if typus != enums.ChatType.PRIVATE:
+            await message.reply(jFile["message"]["caption"]["pwgen"]["dm"])
     print('---end pwgen---')
 
 
@@ -394,19 +401,6 @@ async def search(bot, message):
         await bot.send_message(message.chat.id, jFile["message"]["error"]["search"]["invalid_url_error"])
 
     print('---end search---')
-    
-#@app.on_message(filters.regex(r'^[\.\!\&\/]gpt', re.IGNORECASE) & filters.text)
-#async def gpt(bot, message):
-#    prompt = re.sub(r'^[\.\!\&\/]gpt','', message.text.lower()).strip()
-#    openai.api_key=info["openai"]["api_key"]
-#    
-#    res = openai.Completion.create(
-#        engine = "gpt-3.5-turbo",
-#        prompt = prompt
-#    )
-#    
-#    out = res.choise[0].text
-#    bot.send_message(out)
     
 #@app.on_message(filters.chat(TARGET) & filters.new_chat_members)
 #async def welcome(bot, message):
