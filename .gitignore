@@ -13,6 +13,7 @@ download/
 bot/resources/JSON/info.json
 bot/resources/version/*
 windows italia tool bot.session*
+windows italia tool bot.session
 =======
 .vscode/
 __pycache__/
