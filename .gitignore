@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 #VSC
-.vscode/
+.vscode/*
 
 # PYTHON
 __pycache__/
